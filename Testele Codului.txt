@@ -1,0 +1,97 @@
+// Test 1
+// Creează un flow simplu cu un titlu, un text și un pas de introducere a unui număr.
+// Salvează flow-ul și verifică dacă fișierul de ieșire conține conținutul așteptat.
+// Input: 1, Titlu Exemplu, Text Exemplu, 42
+
+// Test 2
+// În timpul creării flow-ului, furnizează intenționat date de intrare nevalide pentru un pas de introducere a unui număr.
+// Confirmă că programul gestionează corect eroarea și incrementează numărul de erori.
+// Input: 2, Titlu Invalid, Text Invalid, NumarInvalid
+
+// Test 3
+// Creează un flow cu un pas de afișare și verifică dacă arată cu acuratețe pașii adăugați până în prezent.
+// Input: 3, Titlu Exemplu, Text Exemplu, 42, Afișare
+
+// Test 4
+// Adaugă un pas TextFileInput și furnizează un drum valid către un fișier text.
+// Verifică dacă conținutul din fișierul text este adăugat corect la flow.
+// Input: 4, Descriere Intrare Fișier, exemplu.txt
+
+// Test 5
+// Adaugă un pas CsvFileInput și furnizează un drum valid către un fișier CSV.
+// Verifică dacă datele numerice din fișierul CSV sunt adăugate corect la flow.
+// Input: 5, Descriere Intrare CSV, exemplu.csv
+
+// Test 6
+// Utilizează un pas Calculus pentru a efectua o adunare.
+// Verifică dacă rezultatul este afișat și stocat corect.
+// Input: 6, Adunare, 10, 20
+
+// Test 7
+// Utilizează un pas Calculus pentru a efectua o scădere.
+// Verifică dacă rezultatul este afișat și stocat corect.
+// Input: 7, Scădere, 30, 15
+
+// Test 8
+// Utilizează un pas Calculus pentru a efectua o înmulțire.
+// Verifică dacă rezultatul este afișat și stocat corect.
+// Input: 8, Înmulțire, 5, 8
+
+// Test 9
+// Utilizează un pas Calculus pentru a efectua o împărțire.
+// Verifică dacă rezultatul este afișat și stocat corect.
+// Input: 9, Împărțire, 40, 2
+
+// Test 10
+// Utilizează un pas Calculus pentru a găsi minimul dintre două numere.
+// Verifică dacă rezultatul este afișat și stocat corect.
+// Input: 10, Minim, 7, 3
+
+// Test 11
+// Utilizează un pas Calculus pentru a găsi maximul dintre două numere.
+// Verifică dacă rezultatul este afișat și stocat corect.
+// Input: 11, Maxim, 15, 25
+
+// Test 12
+// Creează un flow și salvează-l într-un alt fișier folosind un pas OutputStep.
+// Verifică dacă noul fișier conține conținutul corect.
+// Input: 12, OutputStep, iesire.txt, Titlu Ieșire, Descriere Ieșire
+
+// Test 13
+// Creează mai multe flow-uri în aceeași sesiune.
+// Verifică că numărul de erori și statisticile sunt corecte pentru fiecare flow.
+// Input: 13, Titlu Flow 1, Text 1, 5, Titlu Flow 2, Text 2, 10, 15
+
+// Test 14
+// Verifică abilitatea utilizatorului de a naviga prin meniu fără probleme.
+// Asigură-te că programul gestionează corect input-ul utilizatorului.
+// Input: 1, Titlu Exemplu, Text Exemplu, 42, 2, 3, 4, 5
+
+// Test 15
+// Șterge un flow specific și verifică că este eliminat din fișierul text.
+// Input: 15, 3, 1 (pentru a șterge primul flow)
+
+// Test 16
+// Utilizează un fișier care nu există pentru un pas de intrare din fișier.
+// Verifică că programul gestionează corect erorile de intrare din fișier.
+// Input: 4, Descriere Intrare Fișier, inexistent.txt
+
+// Test 17
+// Salvează un flow fără a adăuga niciun pas.
+// Verifică că programul gestionează corect un flow gol.
+// Input: 9 (pentru a finaliza flow-ul)
+
+// Test 18
+// Creează un flow și elimină toți pașii.
+// Verifică dacă pasul de afișare arată un flow gol.
+// Input: 3, 1, 1 (pentru a șterge primul pas), Afișare
+
+// Test 19
+// Creează un flow, afișează-l și salvează-l apoi.
+// Verifică dacă fișierul salvat conține conținutul corect.
+// Input: 3, 9 (pentru a finaliza flow-ul), 12, SalvareDupaAfișare.txt, Titlu Salvare, Descriere Salvare
+
+// Test 20
+// Creează un flow cu un număr mare de pași.
+// Verifică dacă programul gestionează eficient flow-urile mari.
+// Input: Repetă procesul de adăugare a unui pas de mai multe ori.

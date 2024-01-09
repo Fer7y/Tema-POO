@@ -1,0 +1,610 @@
+#include <iostream>
+#include <ctime>
+#include <fstream>
+#include<cstring>
+#include<chrono>
+#include<cmath>
+
+using namespace std;
+using namespace chrono;
+
+
+//ifstream ftxt("fisiertxt.txt");
+ofstream gtxt("fisiertxt.txt",ios::app);
+//ifstream fcsv("fisiercsv.csv");
+//ofstream gcsv("fisiercsv.csv");
+
+
+int nrerori=0;
+int nrinceperi=0;
+int nrsfarsiri=0;
+int averageerori=0;
+
+using Clock = high_resolution_clock;
+using TimePoint = time_point<Clock>;
+using Duration = duration<double>;
+
+
+template<typename T>
+T adunare(T x,T y){
+    
+return x+y;
+}
+template<typename T>
+T scadere(T x,T y){
+    
+return abs(x-y);
+}
+template<typename T>
+T inmultire(T x,T y){
+    
+return x*y;
+}
+template<typename T>
+T impartire(T x,T y){
+if(x>y) return x/y;
+else return y/x;
+
+}
+
+
+
+int read(int bottom, int top) {
+    while (true) {
+        string input;
+        getline(cin, input);
+
+        try {
+            size_t pos;
+            int digit = stoi(input, &pos);
+
+            if (pos == input.length() && digit >= bottom && digit <= top) {
+                return digit;
+            } else {
+                throw invalid_argument("Invalid input");
+            }
+        } catch (const exception &e) {
+            (void) e.what();
+            cerr << "Invalid input. Please enter a valid number.\n";
+            nrerori++;
+        }
+    }
+}
+
+
+
+class Step {
+public:
+    Step(){}
+
+    virtual void execute() const {}
+};
+
+class TitleStep : public Step {
+public:
+    TitleStep(const string& title, const string& subtitle)
+        : title(title), subtitle(subtitle) {}
+
+    void execute() const override {
+        gtxt<<title<<" "<<subtitle<<endl;
+    }
+
+private:
+    string title;
+    string subtitle;
+};
+
+class TextStep : public Step {
+public:
+    TextStep(const string& title, const string& copy)
+        : title(title), copy(copy) {}
+
+    void execute() const override {
+        gtxt<<title<<" "<<copy<<endl;
+    }
+
+private:
+    string title;
+    string copy;
+};
+
+class TextInputStep : public Step {
+public:
+    TextInputStep(const string& description , const string& input)
+        : inputDescription(description), userInput(input) {}
+
+    void execute() const override {
+        gtxt<<inputDescription<<" "<<userInput<<endl;
+    }
+
+private:
+    string inputDescription;
+    string userInput;
+};
+
+class NumberInputStep : public Step {
+public:
+    NumberInputStep(const string& description, float userNumber)
+        : inputDescription(description), userInput(userNumber) {}
+
+    void execute() const override {
+        gtxt<<inputDescription<<" "<<userInput<<endl;
+    }
+
+
+protected:
+    string inputDescription;
+    float userInput;
+};
+
+class CalculusStep : public Step {
+public:
+    CalculusStep(int steps, const string& operation)
+        : steps(steps), operation(operation) {}
+        
+    void setvec(float tmp[])
+    {this->t=tmp;
+        
+        
+    }
+
+    void execute() const override {
+        if(operation[0]=='+') {t[0]=adunare(t[0],t[1]);
+        t[1]=0;
+            
+        }
+        else if (operation[0]=='-'){
+        t[0]=scadere(t[0],t[1]);
+        t[1]=0;
+            
+            
+        }
+        else if (operation[0]=='*'){
+            t[0]=inmultire(t[0],t[1]);
+            t[1]=0;
+        }
+        else if (operation[0]=='/'){
+            t[0]=impartire(t[0],t[1]);
+            t[1]=0;
+            
+        }
+        else if (operation[0]=='m' && operation[1]=='i' && operation[2]=='n'){
+            if(t[1]<t[0])t[0]=t[1];
+            
+            t[1]=0;
+        }
+        else if (operation[0]=='m' && operation[1]=='a' && operation[2]=='n'){
+            if(t[1]>t[0])t[0]=t[1];
+            
+            t[1]=0; 
+            
+        }
+        
+        else{cout<<"Invalid Option";nrerori++;}
+        
+        gtxt<<"Rezultatul este: "<<t[0]<<endl;
+    }
+
+private:
+    int steps;
+    string operation;
+    float *t;
+};
+
+class DisplayStep : public Step {
+public:
+    DisplayStep(int step)
+        : displayStep(step) {}
+
+    void execute() const override {
+       
+        ifstream ftxt("fisiertxt.txt");
+        
+        string sir;
+        int i;
+        
+        
+        cout<<"Asta aveti in fisierul txt pana acum:"<<endl;
+    while(getline(ftxt,sir))  gtxt << sir<<endl;
+    }
+
+private:
+    int displayStep;
+};
+
+class TextFileInputStep : public Step {
+public:
+    TextFileInputStep(const string& description, const string& fileName)
+        : fileDescription(description), fileName(fileName) {}
+
+    void execute() const override {
+           ifstream gfisiertxt(fileName);
+           
+           gtxt<<fileDescription<<endl;
+           
+           string line;
+           while(getline(gfisiertxt,line))  gtxt << line<<endl;
+        
+        
+        
+        
+    }
+
+private:
+    string fileDescription;
+    string fileName;
+};
+
+class CsvFileInputStep : public Step {
+public:
+    CsvFileInputStep(const string& description, const string& fileName)
+        : fileDescription(description), fileName(fileName) {}
+
+    void execute() const override {
+        
+       ifstream fcsv(fileName);
+           gtxt<<fileDescription<<endl;
+            char separator;
+            float number;
+            
+        while(fcsv>>number>>separator)  gtxt<<number<<" "<<endl;
+            
+        
+
+        
+    }
+
+private:
+    string fileDescription;
+    string fileName;
+};
+
+class OutputStep : public Step {
+public:
+    OutputStep(int step, const string& fileName, const string& title, const string& description)
+        : outputStep(step), fileName(fileName), title(title), description(description) {}
+
+    void execute() const override {
+       
+        ofstream gnoutxt(fileName);
+        ifstream ftxt("fisiertxt.txt");
+        gnoutxt << title <<"               "<<endl;
+        gnoutxt << description<<endl;
+        cout<<endl;
+        
+        
+        string line;
+        while(getline(ftxt,line))  gnoutxt << line<<endl;
+        
+        gnoutxt<<"---"<<endl;
+        
+        
+        
+        gnoutxt.close();
+        ftxt.close();
+       
+    }
+
+private:
+    int outputStep;
+    string fileName;
+    string title;
+    string description;
+};
+
+class EndStep : public Step {
+public:
+    EndStep(){}
+
+    void execute() const override {
+        cout << "Terminarea Flow-ului" << endl;
+    }
+};
+
+
+
+
+ void submeniu(string numefisier2){
+     int y;
+     int k=0;
+     float vec[3];
+     
+     
+     while(1)
+     {  cout<<"Alege ce step doresti: ";
+         cout<<"1.Pentru a pune Titlu si Subtitlu\n";
+         cout<<"2.Pentru a pune Titlu si Copie la text\n";
+         cout<<"3.Pentru a pune Text si Descriere\n";
+         cout<<"4.Pentru a pune Numar si Descriere\n";
+         cout<<"5.Pentru a calcula in cazul in care sunt mai multe numere\n";
+         cout<<"6.Pentru a afisa continutul in timpul creari Flow-ul\n";
+         cout<<"7.Pentru a adauga text din fisier txt + Descriere\n";
+         cout<<"8.Pentru a adauga text din fisier csv + Descriere\n";
+         cout<<"9.Pentru a salva Flow-ul intr un fisier txt\n";
+         cout<<"10.Pentru a finaliza Flow-ul\n";
+        y=read(1,10);
+       cout<<endl;
+       switch (y)
+       {case 1: {Step *a;
+              string titlu,subtitlu;
+              cout<<"Ce titlu dorinti sa aveti: ";
+              cin>>titlu;
+              cout<<endl;
+              cout<<"Ce subtitlu dorinti sa aveti: ";
+              cin>>subtitlu;
+              cout<<endl;
+              
+         a=new TitleStep(titlu,subtitlu);
+         a->execute();
+         break;
+           
+           
+          }
+          case 2: {
+             string titlu1,copie;
+              cout<<"Ce titlu dorinti sa aveti la text: ";
+              cin>>titlu1;
+              cout<<endl;
+              cout<<"Scrieti iar textul: ";
+              cin>>copie;
+              cout<<endl;
+
+              
+              
+                Step *a1;
+   
+                a1=new TextStep(titlu1,copie);
+                a1->execute();
+                break;
+          }
+          
+          case 3 :{
+              
+              Step *a2;
+   
+
+              string descriere,text;
+              cout<<"Descrieti textul: ";
+              cin>>descriere;
+              cout<<endl;
+              cout<<"Scrieti textul: ";
+              cin>>text;
+              cout<<endl;
+              
+              a2=new TextInputStep(descriere,text);
+              a2->execute();
+              break;
+          }
+          case 4:{
+              string descriere1;
+              int numar;
+              Step *a3;
+              cout<<"Descriere : ";
+              cin>>descriere1;
+              cout<<endl;
+              cout<<"Numar : ";
+              cin>>numar;
+              cout<<endl;
+              vec[k]=numar;
+              k++;
+   
+              a3=new NumberInputStep(descriere1,numar);
+              a3->execute();
+              break;
+          }
+          
+          case 5:{
+              string operatie;
+              Step *a4;
+              cout<<"operatie : ";
+              cin>>operatie;
+              cout<<endl;
+              
+   
+a4=new CalculusStep(1,operatie);
+dynamic_cast<CalculusStep*>(a4)->setvec(vec);
+a4->execute();
+break;
+          }
+          
+          case 6:{
+              
+              
+              Step *a5;
+a5=new DisplayStep(1);
+a5->execute();
+break;
+              
+              
+              
+          }
+          
+          case 7:{
+              
+              Step *a6;
+                string descriere2,numefisier;
+              cout<<"Descrieti fisierul: ";
+              cin>>descriere2;
+              cout<<endl;
+              cout<<"Nume Fisier: ";
+              cin>>numefisier;
+              cout<<endl;
+   
+a6=new TextFileInputStep(descriere2,numefisier);
+a6->execute();
+break;
+              
+              
+          }
+          
+          case 8:{
+              
+             Step *a7;
+              string descriere3,numefisier1;
+              cout<<"Descrieti fisierul: ";
+              cin>>descriere3;
+              cout<<endl;
+              cout<<"Nume Fisier: ";
+              cin>>numefisier1;
+              cout<<endl;
+   
+             a7=new CsvFileInputStep(descriere3,numefisier1);
+             a7->execute();
+             break;
+              
+             
+          }
+          
+          case 9:{
+              Step *a8;
+              string descriere4,numefisier2,titlu2;
+              cout<<"Numele fisierului unde vreti sa salvati Flow-ul:";
+              cin>>numefisier2;
+              cout<<"Titlul fisierului: ";
+              cin>>titlu2;
+              cout<<endl;
+              cout<<"Descrierea fisierului: ";
+              cin>>descriere4;
+              cout<<endl;
+   
+              
+              a8=new OutputStep(1,numefisier2,titlu2,descriere4);
+              a8->execute();
+ 
+
+             nrsfarsiri++;
+             
+             
+             cout<<"Numarul de inceperi: "<<nrinceperi<<endl;
+             cout<<"Numarul de sfarsiri: "<<nrsfarsiri<<endl;
+             cout<<"Numarul de erori: "<<nrerori<<endl;
+             if(nrsfarsiri!=0) averageerori=(averageerori+nrerori)/nrsfarsiri;
+             cout<<"Media de erori per flow: "<<averageerori<<endl;
+
+              nrinceperi=0;
+              nrsfarsiri=0;
+              nrerori=0;
+              
+
+              break;
+              
+              
+          }
+           
+           case 10: return;
+            
+            default: return;
+               
+           
+           
+           
+           
+       }
+         
+         
+     }
+     
+     
+     
+     
+     
+ }
+
+
+
+
+
+
+
+
+
+
+
+int main() {
+
+   
+
+int x;
+string NumeFisier="fisiertxt.txt";
+
+while(1){
+cout<<"Alegeti Optiunea:\n";
+cout<<"1.Pentru Creare Flow\n";
+cout<<"2.Pentru Afisare Flow\n";
+cout<<"3.Pentru Stergere Flow\n";
+cout<<"4.Iesiti din program\n";
+
+x=read(1,4);
+
+
+
+switch(x)
+{case 1: {
+    
+nrinceperi++;
+
+TimePoint start = Clock::now();    
+    
+    submeniu(NumeFisier);
+    
+TimePoint end = Clock::now();
+
+Duration duration = end - start;
+double durationInSeconds = duration.count();
+cout<<"Pentru crearea acestui flow a durat aproximativ: "<<durationInSeconds<<" secunde\n";
+    
+
+}
+
+case 2:{ifstream afisflow(NumeFisier);
+
+        string line;
+        while(getline(afisflow,line))  {if(line=="---") {cout<<"Acesta este un flow creat de dvs\n";}
+        else cout<<line<<endl; }
+ 
+         afisflow.close();
+    break;
+}
+    
+
+case 3:{int k,j=1;
+        ifstream stergflow(NumeFisier);
+        ofstream replace("replace.txt");
+        string line1;
+         cout<<"Al cate-lea flow doriti sa stergeti?\n";
+         cin>>k;
+         while(getline(stergflow,line1)){
+             if(k!=j) replace<<line1<<endl;
+             if(line1=="---") j++;
+             
+             
+             
+             
+         }
+
+
+   remove(NumeFisier.c_str());
+   rename("replace.txt",NumeFisier.c_str());
+
+
+stergflow.close();
+replace.close();
+ 
+  break;
+}
+
+    
+    
+case 4: return 0;
+
+    
+default: return 0;
+}
+
+
+
+}
+
+   
+   
+}
